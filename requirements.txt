@@ -1,0 +1,4 @@
+setuptools
+discord.py==1.7.2
+python-a2s==1.3.0
+click==8.0.0

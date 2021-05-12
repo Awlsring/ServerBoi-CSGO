@@ -1,0 +1,23 @@
+#!/bin/bash
+# Default values.
+# Override with -e VAR=value option.
+
+ADDRESS=$(curl http://checkip.amazonaws.com)
+PORT=${PORT:-27015}
+
+STEAM_APP_ID=${STEAM_APP:-csgo}
+STEAM_APP_ID=${STEAM_APP_ID:-740}
+
+GAME_DIR=${GAME_DIR:-/opt/csgo}
+STEAM_DIR=${STEAM_DIR:-/opt/steamcmd}
+
+APPLICATION_ID=${APPLICATION_ID:-}
+INTERACTION_TOKEN=${INTERACTION_TOKEN:-}
+EXECUTION_NAME=${EXECUTION_NAME:-}
+
+download_client() {
+    "${STEAM_DIR}"/steamcmd.sh +login anonymous +force_install_dir "${GAME_DIR}" +app_update 740 +quit
+}
+
+DOWNLOAD_CLIENT=download_client
+RUN_CLIENT='./srcds_run -game csgo -steam_dir "${STEAM_DIR}" -steamcmd_script "${STEAM_DIR}/steamcmd.sh" -console -autoupdate -usercon +game_type 0 +game_mode 0 +mapgroup mg_active +map de_dust2'
