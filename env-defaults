@@ -5,19 +5,58 @@
 ADDRESS=$(curl http://checkip.amazonaws.com)
 PORT=${PORT:-27015}
 
-STEAM_APP_ID=${STEAM_APP:-csgo}
+STEAM_APP=${STEAM_APP:-csgo}
 STEAM_APP_ID=${STEAM_APP_ID:-740}
 
-GAME_DIR=${GAME_DIR:-/opt/csgo}
+STEAM_APP_DIR=${STEAM_APP_DIR:-/opt/csgo}
 STEAM_DIR=${STEAM_DIR:-/opt/steamcmd}
 
 APPLICATION_ID=${APPLICATION_ID:-}
 INTERACTION_TOKEN=${INTERACTION_TOKEN:-}
 EXECUTION_NAME=${EXECUTION_NAME:-}
 
-download_client() {
-    "${STEAM_DIR}"/steamcmd.sh +login anonymous +force_install_dir "${GAME_DIR}" +app_update 740 +quit
-}
+# Server start variables
+FPS_MAX=${FPS-MAX:-300} \
+TICK_RATE=${TICK-RATE:-128} \
+PORT=${PORT:-27015} \
+TV_PORT=${TV-PORT:-27020} \
+CLIENT_PORT=${CLIENT-PORT:-27005} \
+MAX_PLAYERS=${MAX-PLAYERS:-10} \
+GSL_TOKEN=${GSL_TOKEN:-0} \
+RCON_PASSWORD=${RCON-PASSWORD:-"ServerBoi"} \
+PASSWORD=${PASSWORD:-""} \
+START_MAP=${START-MAP:-"de_dust2"} \
+REGION=${REGION:-255} \
+MAP_GROUP=${MAP-GROUP:-"mg_active"} \
+GAME_TYPE=${GAME-TYPE:-0} \
+GAME_MODE=${GAME-MODE:-1} \
+SERVER_NAME=${SERVER_NAME:-"ServerBoi-CSGO"} 
 
+
+download_client() {
+     bash "${STEAM_DIR}/steamcmd.sh" +login anonymous \
+        +force_install_dir "${STEAM_APP_DIR}" \
+        +app_update "${STEAM_APP_ID}" \
+        +quit
+}
 DOWNLOAD_CLIENT=download_client
-RUN_CLIENT='./srcds_run -game csgo -steam_dir "${STEAM_DIR}" -steamcmd_script "${STEAM_DIR}/steamcmd.sh" -console -autoupdate -usercon +game_type 0 +game_mode 0 +mapgroup mg_active +map de_dust2'
+
+run_client() {
+    bash "${STEAM_APP_DIR}/srcds_run" -game "${STEAM_APP}" -console -autoupdate \
+			-steam_dir "${STEAM_DIR}" \
+			-steamcmd_script "${HOME_DIR}/${STEAM_APP}_update.txt" \
+			-usercon \
+			+fps_max "${FPS_MAX}" \
+			-tickrate "${TICK_RATE}" \
+			-port "${PORT}" \
+			+tv_port "${TV_PORT}" \
+			+clientport "${CLIENT_PORT}" \
+			-maxplayers_override "${MAX_PLAYERS}" \
+			+game_type "${GAME_TYPE}" \
+			+game_mode "${GAME_MODE}" \
+			+mapgroup "${MAP_GROUP}" \
+			+map "${START_MAP}" \
+			+sv_setsteamaccount "${GSL_TOKEN}" \
+			+sv_region "${REGION}" 
+}
+RUN_CLIENT=run_client

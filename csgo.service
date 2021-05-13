@@ -1,0 +1,22 @@
+[Unit]
+Description=CSGO Server
+After=docker.service
+Requires=docker.service
+
+[Service]
+TimeoutStartSec=0
+ExecStartPre=-/usr/bin/docker stop %n
+ExecStartPre=-/usr/bin/docker rm %n
+ExecStart=/usr/bin/docker run \
+          --name %n \
+          --pull=always \
+          --rm \
+          --stop-timeout 120 \
+          -v /opt/valheim:/opt/valheim:Z \
+          serverboi/csgo
+ExecStop=/usr/bin/docker stop %n
+Restart=always
+RestartSec=10s
+
+[Install]
+WantedBy=multi-user.target

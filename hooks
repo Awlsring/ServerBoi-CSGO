@@ -4,5 +4,3 @@
 STATE_STARTING_CLIENT='python3 /opt/serverboi/scripts/patch_wf_embed.py change-stage --stage=Starting-Client'
 
 STATE_VERIFY_CLIENT='python3 /opt/serverboi/scripts/patch_wf_embed.py change-stage --stage=Verifying-Client'
-
-STATE_COMPLETE='python3 /opt/serverboi/scripts/patch_wf_embed.py finish-wf'
