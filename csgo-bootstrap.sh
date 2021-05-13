@@ -1,6 +1,8 @@
 #!/bin/bash
 # install and init server
 
+echo "STARTING BOOTSTRAP"
+
 . /usr/local/bin/env-defaults
 . /usr/local/bin/hooks
 
@@ -43,6 +45,8 @@ complete_workflow() {
 }
 
 complete_workflow
+
+echo "BOOTSTRAP COMPLETE"
 
 # # Start enable and start service
 # sudo systemctl daemon-reload

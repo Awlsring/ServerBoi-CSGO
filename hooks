@@ -1,6 +1,10 @@
 #!/bin/bash
 #Hooks to monitor state
 
+echo "LOADING HOOKS"
+
+STATE_DOWNLOADING='python3 /opt/serverboi/scripts/patch_wf_embed.py change-stage --stage=Downloading-Client'
+
 STATE_STARTING_CLIENT='python3 /opt/serverboi/scripts/patch_wf_embed.py change-stage --stage=Starting-Client'
 
 STATE_VERIFY_CLIENT='python3 /opt/serverboi/scripts/patch_wf_embed.py change-stage --stage=Verifying-Client'
