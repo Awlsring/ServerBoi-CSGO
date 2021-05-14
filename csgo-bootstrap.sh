@@ -31,12 +31,24 @@ else
     python3 /opt/serverboi/scripts/patch_wf_embed.py fail-wf --stage=Start-Client
 fi
 
+# Give client 1 minute to start
+sleep 1m
+
 $STATE_VERIFY_CLIENT
-if $QUERY_SERVER ; then
-    $STATE_COMPLETE
-else
-    python3 /opt/serverboi/scripts/patch_wf_embed.py fail-wf --stage=Verify-Client
-fi
+for (( i=0; i<10; ++i)); do
+    [ -e filename ] && break
+    sleep 10
+    if $QUERY_SERVER ; then
+        $STATE_COMPLETE
+        break
+        sleep 30
+    fi
+
+    if i=9 ; then
+        python3 /opt/serverboi/scripts/patch_wf_embed.py fail-wf --stage=Verify-Client
+    fi
+
+done
 
 END=$(date +%s)
 
@@ -46,9 +58,12 @@ complete_workflow() {
 
 complete_workflow
 
-echo "BOOTSTRAP COMPLETE"
+WORKFLOW_TOKEN=$(curl https://serverboi-provision-token-bucket.s3-us-west-2.amazonaws.com/"$EXECUTION_NAME")
 
-# # Start enable and start service
-# sudo systemctl daemon-reload
-# sudo systemctl enable ${STEAM_APP}.service
-# sudo systemctl start ${STEAM_APP}.service
+return_token() {
+    curl -v -X POST 'https://k6u2weffda.execute-api.us-west-2.amazonaws.com/prod/bootstrap' -H 'content-type: application/json' -d '{ "TaskToken": "'${WORKFLOW_TOKEN}'" }'
+}
+
+return_token
+
+echo "BOOTSTRAP COMPLETE"
