@@ -20,22 +20,20 @@ EXECUTION_NAME=${EXECUTION_NAME:-}
 WORKFLOW_ENDPOINT=${WORKFLOW_ENDPOINT:-}
 
 # Server start variables
-FPS_MAX=${FPS-MAX:-300}
-TICK_RATE=${TICK-RATE:-128}
-PORT=${PORT:-27015}
-TV_PORT=${TV-PORT:-27020}
-CLIENT_PORT=${CLIENT-PORT:-27005}
-MAX_PLAYERS=${MAX-PLAYERS:-10}
+FPS_MAX=${FPS_MAX:-300}
+TICK_RATE=${TICK_RATE:-128}
+TV_PORT=${TV_PORT:-27020}
+CLIENT_PORT=${CLIENT_PORT:-27005}
+MAX_PLAYERS=${MAX_PLAYERS:-10}
 GSL_TOKEN=${GSL_TOKEN:-0} \
-RCON_PASSWORD=${RCON-PASSWORD:-"ServerBoi"}
+RCON_PASSWORD=${RCON_PASSWORD:-"ServerBoi"}
 PASSWORD=${PASSWORD:-""}
-START_MAP=${START-MAP:-"de_dust2"}
+START_MAP=${START_MAP:-"de_dust2"}
 REGION=${REGION:-255}
-MAP_GROUP=${MAP-GROUP:-"mg_active"}
-GAME_TYPE=${GAME-TYPE:-0}
-GAME_MODE=${GAME-MODE:-1}
+MAP_GROUP=${MAP_GROUP:-"mg_active"}
+GAME_TYPE=${GAME_TYPE:-0}
+GAME_MODE=${GAME_MODE:-1}
 SERVER_NAME=${SERVER_NAME:-"ServerBoi-CSGO"} 
-
 
 download_client() {
      bash "${STEAM_DIR}/steamcmd.sh" +login anonymous \
@@ -46,7 +44,7 @@ download_client() {
 DOWNLOAD_CLIENT=download_client
 
 run_client() {
-    bash screen -d -m "${STEAM_APP_DIR}/srcds_run" -game "${STEAM_APP}" -console -autoupdate \
+    bash "${STEAM_APP_DIR}/srcds_run" -game "${STEAM_APP}" -console -autoupdate \
 			-steam_dir "${STEAM_DIR}" \
 			-steamcmd_script "${HOME_DIR}/${STEAM_APP}_update.txt" \
 			-usercon \
@@ -64,5 +62,3 @@ run_client() {
 			+sv_region "${REGION}" 
 }
 RUN_CLIENT=run_client
-
-QUERY_SERVER='python3 /opt/serverboi/scripts/ping_server.py change-stage --stage=Verifying-Client'

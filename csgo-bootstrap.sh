@@ -1,10 +1,7 @@
-#!/bin/bash
-# install and init server
-
 echo "STARTING BOOTSTRAP"
 
 . /usr/local/bin/env-defaults
-. /usr/local/bin/hooks
+. /opt/serverboi/scripts/hooks
 
 START=$(date +%s)
 
@@ -24,46 +21,18 @@ if [ ! -f "${STEAM_APP_DIR}/${STEAM_APP}/cfg/server.cfg" ]; then
 fi
 
 $STATE_STARTING_CLIENT
+
+WORKFLOW_TOKEN=$(curl https://serverboi-provision-token-bucket.s3-us-west-2.amazonaws.com/"$EXECUTION_NAME")
+
+RETURN_URL="$WORKFLOW_ENDPOINT/bootstrap"
+echo "Sending token: $WORKFLOW_TOKEN to URL: $RETURN_URL"
+curl -v -X POST "${RETURN_URL}" -d '{ "TaskToken": "'${WORKFLOW_TOKEN}'"}'
+
+END=$(date +%s)
+
 if $RUN_CLIENT ; then
     echo "Client up"
 else
     echo "Error Loading client"
     python3 /opt/serverboi/scripts/patch_wf_embed.py fail-wf --stage=Start-Client
 fi
-
-# Give client 1 minute to start
-sleep 1m
-
-$STATE_VERIFY_CLIENT
-for (( i=0; i<10; ++i)); do
-    [ -e filename ] && break
-    sleep 10
-    if $QUERY_SERVER ; then
-        $STATE_COMPLETE
-        break
-        sleep 30
-    fi
-
-    if i=9 ; then
-        python3 /opt/serverboi/scripts/patch_wf_embed.py fail-wf --stage=Verify-Client
-    fi
-
-done
-
-END=$(date +%s)
-
-complete_workflow() {
-    python3 /opt/serverboi/scripts/patch_wf_embed.py finish-wf --start="$START" --end="$END"
-}
-
-complete_workflow
-
-WORKFLOW_TOKEN=$(curl https://serverboi-provision-token-bucket.s3-us-west-2.amazonaws.com/"$EXECUTION_NAME")
-
-return_token() {
-    curl -v -X POST 'https://k6u2weffda.execute-api.us-west-2.amazonaws.com/prod/bootstrap' -H 'content-type: application/json' -d '{ "TaskToken": "'${WORKFLOW_TOKEN}'" }'
-}
-
-return_token
-
-echo "BOOTSTRAP COMPLETE"
