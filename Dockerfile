@@ -8,8 +8,8 @@ ENV STEAM_APP_ID 740
 ENV STEAM_APP csgo
 ENV STEAM_APP_DIR "${HOME_DIR}/${STEAM_APP}-server"
 #
-COPY env-defaults /usr/local/bin/
-COPY csgo-bootstrap.sh /usr/local/bin/
+COPY requirements.txt /tmp
+COPY "set_constants.py" /opt/serverboi/scripts/
 #
 RUN set -x \
     && sed -i -e 's/# en_US.UTF-8 UTF-8/en_US.UTF-8 UTF-8/' /etc/locale.gen \
@@ -25,16 +25,11 @@ RUN set -x \
 	&& ln -s "${STEAM_DIR}/linux32/steamclient.so" "/usr/lib/i386-linux-gnu/steamclient.so" \
 	&& ln -s "${STEAM_DIR}/linux64/steamclient.so" "/usr/lib/x86_64-linux-gnu/steamclient.so" \
 	&& mkdir -p "${STEAM_APP_DIR}" \
-	&& { \
-		echo '@ShutdownOnFailedCommand 1'; \
-		echo '@NoPromptForPassword 1'; \
-		echo 'login anonymous'; \
-		echo 'force_install_dir '"${STEAM_APP_DIR}"''; \
-		echo 'app_update '"${STEAM_APP_ID}"''; \
-		echo 'quit'; \
-	   } > "${HOME_DIR}/${STEAM_APP}_update.txt" \
-	&& chown -R "${USER}:${USER}" "/usr/local/bin/${STEAM_APP}-bootstrap.sh" "${STEAM_APP_DIR}" "${HOME_DIR}/${STEAM_APP}_update.txt" \	
+	&& chown -R "${USER}:${USER}" "/opt/serverboi/scripts/set_constants.py" "${STEAM_APP_DIR}" \	
     && chmod 755 /usr/local/bin/* \
+    && chmod 755 /tmp/requirements.txt \
+    && pip3 install -r /tmp/requirements.txt \
+    && rm /tmp/requirements.txt \
 	&& apt-get autoremove -y \
 	&& rm -rf /var/lib/apt/lists/* 
 #
@@ -44,7 +39,7 @@ VOLUME ${STEAM_APP_DIR}
 #
 WORKDIR ${HOME_DIR}
 #
-CMD ["bash", "/usr/local/bin/csgo-bootstrap.sh"]
+CMD ["python3", "/opt/serverboi/scripts/bootstrap.py"]
 #
 EXPOSE 27015/tcp
 EXPOSE 27015/udp
