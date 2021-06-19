@@ -30,7 +30,7 @@ GSL_TOKEN = os.environ.get("GSL_TOKEN", 0)
 RCON_PASSWORD = os.environ.get("RCON_PASSWORD", "ServerBoi")
 PASSWORD = os.environ.get("PASSWORD")
 START_MAP = os.environ.get("START_MAP", "de_dust2")
-REGION = os.environ.get("REGION", 255)
+SV_REGION = os.environ.get(255)
 MAP_GROUP = os.environ.get("MAP_GROUP", "mg_active")
 GAME_TYPE = os.environ.get("GAME_TYPE", 0)
 GAME_MODE = os.environ.get("GAME_MODE", 1)
@@ -55,4 +55,4 @@ RUN_CLIENT = f"screen -d -m {STEAM_APP_DIR}/srcds_run -game {STEAM_APP} -console
         +mapgroup {MAP_GROUP} \
         +map {START_MAP} \
         +sv_setsteamaccount {GSL_TOKEN} \
-        +sv_region {REGION}"
+        +sv_region {SV_REGION}"
